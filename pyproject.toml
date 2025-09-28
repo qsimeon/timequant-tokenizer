@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "timequant-tokenizer"
+version = "0.1.0"
+description = "Streaming Gaussian-quantile tokenizer for continuous time series"
+authors = [{ name = "Quilee Simeon" }]
+license = { text = "Apache-2.0" }
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.22",
+    "scikit-learn>=1.3",
+    "h5py>=3.8",
+    "scipy>=1.9"
+]
+
+[project.optional-dependencies]
+hf = ["datasets>=2.20.0"]
+dev = ["pytest>=7.0", "ruff>=0.1", "mypy>=1.0"]
+
+[project.urls]
+Homepage = "https://github.com/qsimeon/timequant-tokenizer"
+Repository = "https://github.com/qsimeon/timequant-tokenizer"
+Issues = "https://github.com/qsimeon/timequant-tokenizer/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "ICN", "PIE", "T20", "Q"]
+ignore = ["E501"]  # line too long handled by formatter
