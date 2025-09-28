@@ -70,7 +70,11 @@ def example_univariate_tokenization():
     print(f"Sample tokens: {sample['tokens'][:10]}...")
     print(f"Vocab utilization: {tokenizer.get_vocab_utilization(np.array(sample['tokens'])):.3f}")
     
-    print(f"Tokenizer stats: n={tokenizer.stats.n}, mean={tokenizer.stats.mean:.3f}, std={tokenizer.stats.std:.3f}")
+    # Check if tokenizer stats are initialized before printing
+    if hasattr(tokenizer, 'stats') and tokenizer.stats is not None and hasattr(tokenizer.stats, 'mean') and tokenizer.stats.mean is not None:
+        print(f"Tokenizer stats: n={tokenizer.stats.n}, mean={tokenizer.stats.mean:.3f}, std={tokenizer.stats.std:.3f}")
+    else:
+        print("Tokenizer stats not available (tokenizer not updated in dataset processing)")
     print()
 
 

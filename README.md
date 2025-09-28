@@ -61,6 +61,15 @@ pip install timequant-tokenizer
 # With Hugging Face integration
 pip install timequant-tokenizer[hf]
 
+# For running examples
+pip install timequant-tokenizer[examples]
+
+# For Jupyter notebooks
+pip install timequant-tokenizer[notebooks]
+
+# All optional dependencies
+pip install timequant-tokenizer[all]
+
 # Development installation
 pip install -e .[dev]
 ```
