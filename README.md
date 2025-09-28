@@ -83,10 +83,11 @@ TimeQuant uses **Gaussian quantile binning** for streaming tokenization:
 3. **Quantile Binning**: Maps z-scores to tokens using precomputed N(0,1) quantile boundaries
 4. **Multivariate Extension**: Per-dimension tokenization + k-means codebook reduction
 
-This approach is similar to SAX (Symbolic Aggregate approXimation) but:
+Key characteristics of this approach:
 - Fully streaming (no windowing required)
 - Per-timestep tokenization
 - Clean extension to multivariate data via vector quantization
+- Adaptive statistics that evolve with the data
 
 ## Repository Structure
 
@@ -108,17 +109,13 @@ timequant-tokenizer/
 └── notebooks/00_quickstart.ipynb       # Interactive demo
 ```
 
-## Benchmarks & Baselines
+## Performance Metrics
 
-We compare against:
-- **SAX**: Symbolic Aggregate approXimation 
-- **SFA**: Symbolic Fourier Approximation
-
-Metrics:
-- Token utilization (unique tokens / vocab size)
-- Perplexity on token streams
-- Downstream task performance (forecasting, anomaly detection)
-- Throughput (tokens/second)
+We track the following metrics to evaluate tokenization quality:
+- **Token utilization**: Unique tokens / vocab size (measures vocabulary efficiency)
+- **Entropy**: Information content of token streams
+- **Reconstruction quality**: MSE/MAE between original and decoded values
+- **Throughput**: Tokens/second processing speed
 
 Target performance: ≥5M tokens/min (univariate, CPU)
 
@@ -156,10 +153,10 @@ Apache-2.0
 If you use this work, please cite:
 
 ```bibtex
-@misc{timequant2024,
+@misc{timequant2025,
   title={TimeQuant: Streaming Gaussian-Quantile Tokenization for Time Series},
   author={Simeon, Quilee},
-  year={2024},
+  year={2025},
   url={https://github.com/qsimeon/timequant-tokenizer}
 }
 ```
