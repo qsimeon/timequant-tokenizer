@@ -38,7 +38,7 @@ class RunningStats:
 
     def __init__(self, dim: int | None = None, eps: float = 1e-8):
         self.n = 0
-        self.mean = None if dim is None else np.zeros(dim, dtype=float)
+        self._mean = None if dim is None else np.zeros(dim, dtype=float)
         self.M2 = None if dim is None else np.zeros(dim, dtype=float)
         self.eps = eps
 
@@ -53,14 +53,14 @@ class RunningStats:
         x = np.asarray(x, dtype=float)
         
         # Initialize on first update if needed
-        if self.mean is None:
-            self.mean = np.zeros_like(x, dtype=float)
+        if self._mean is None:
+            self._mean = np.zeros_like(x, dtype=float)
             self.M2 = np.zeros_like(x, dtype=float)
         
         self.n += 1
-        delta = x - self.mean
-        self.mean += delta / self.n
-        delta2 = x - self.mean
+        delta = x - self._mean
+        self._mean += delta / self.n
+        delta2 = x - self._mean
         self.M2 += delta * delta2
 
     def update_batch(self, X: np.ndarray, axis: int = 0) -> None:
@@ -77,6 +77,19 @@ class RunningStats:
             self.update(x)
 
     @property
+    def mean(self) -> np.ndarray:
+        """Running mean estimate.
+        
+        Returns
+        -------
+        np.ndarray
+            Current running mean.
+        """
+        if self._mean is None:
+            raise ValueError("No data seen yet. Call update() first.")
+        return np.copy(self._mean)
+    
+    @property
     def var(self) -> np.ndarray:
         """Sample variance estimate.
         
@@ -86,8 +99,8 @@ class RunningStats:
             Sample variance (unbiased, using n-1 denominator).
         """
         if self.n < 2:
-            return np.zeros_like(self.mean)
-        return self.M2 / (self.n - 1)
+            return np.zeros_like(self._mean)
+        return np.copy(self.M2 / (self.n - 1))
 
     @property  
     def std(self) -> np.ndarray:
@@ -98,7 +111,7 @@ class RunningStats:
         np.ndarray
             Standard deviation with eps added for stability.
         """
-        return np.sqrt(self.var + self.eps)
+        return np.copy(np.sqrt(self.var + self.eps))
 
     def normalize(self, x: ArrayLike) -> np.ndarray:
         """Standardize input using current statistics.
@@ -114,17 +127,19 @@ class RunningStats:
             Standardized input: (x - mean) / std.
         """
         x = np.asarray(x, dtype=float)
-        if self.mean is None:
+        if self._mean is None:
             raise ValueError("No data seen yet. Call update() first.")
-        return (x - self.mean) / self.std
+        return (x - self._mean) / self.std
 
     def reset(self) -> None:
         """Reset all statistics to initial state."""
         self.n = 0
-        if self.mean is not None:
-            self.mean.fill(0.0)
+        if self._mean is not None:
+            self._mean.fill(0.0)
             self.M2.fill(0.0)
 
     def __repr__(self) -> str:
         return (f"RunningStats(n={self.n}, "
-                f"mean={self.mean}, std={self.std if self.mean is not None else None})")
+                f"mean={self._mean}, std={self.std if self._mean is not None else None})")
+    
+            
